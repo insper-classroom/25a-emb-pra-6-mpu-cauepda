@@ -88,8 +88,9 @@ static void mpu_task(void *pvParameters) {
         pkt.yaw   = e.angle.yaw;
 
         static float last_pitch = 0;
-        float dp = pkt.pitch - last_pitch;
+        float dp = pkt.pitch - last_pitch;   
         last_pitch = pkt.pitch;
+        pkt.click = (dp > 15.0f);
 
         xQueueSend(xQueueIMU, &pkt, portMAX_DELAY);
 
