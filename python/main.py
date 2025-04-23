@@ -5,8 +5,10 @@ import pyautogui
 import time
 
 # Configuração da porta serial (ajuste conforme seu SO)
-SERIAL_PORT = '/dev/tty.usbmodem2102'  # ou 'COM3' no Windows
+SERIAL_PORT = '/dev/tty.usbmodem102'  # ou 'COM3' no Windows
 BAUD_RATE   = 115200
+pyautogui.FAILSAFE = False
+pyautogui.PAUSE = 0
 
 def reader_thread(ser):
     """
@@ -14,8 +16,6 @@ def reader_thread(ser):
     roll,pitch,yaw,click
     e converte em movimentos+click.
     """
-    pyautogui.FAILSAFE = False
-    pyautogui.PAUSE = 0
     while True:
         line = ser.readline().decode('ascii', errors='ignore').strip()
         if not line:
@@ -36,6 +36,7 @@ def reader_thread(ser):
 
         # executa movimento
         pyautogui.moveRel(dx, dy, duration=0)
+        pyautogui.moveRel(dx, dy, duration=0, _pause=False)
 
         # executa click se solicitado
         if click:
@@ -53,7 +54,7 @@ if __name__ == '__main__':
     print("Pointer IMU rodando. Pressione Ctrl+C para sair.")
     try:
         while True:
-            time.sleep(1)
+            time.sleep(0.1)
     except KeyboardInterrupt:
         print("\nEncerrando.")
         ser.close()

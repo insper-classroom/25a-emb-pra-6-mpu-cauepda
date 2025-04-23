@@ -68,12 +68,12 @@ static void mpu_task(void *pvParameters) {
         mpu6050_read_raw(accel_raw, gyro_raw, &temp_raw);
 
         FusionVector g = {
-            .axis.x = gyro_raw[0] / 131.0f,
+            .axis.x = gyro_raw[0] / 131.0f,   // cada gyro_raw/131.0f converte LSB→°/s
             .axis.y = gyro_raw[1] / 131.0f,
             .axis.z = gyro_raw[2] / 131.0f
         };
         FusionVector a = {
-            .axis.x = accel_raw[0] / 16384.0f,
+            .axis.x = accel_raw[0] / 16384.0f,   // cada accel_raw/16384.0f converte LSB→g
             .axis.y = accel_raw[1] / 16384.0f,
             .axis.z = accel_raw[2] / 16384.0f
         };
@@ -88,9 +88,9 @@ static void mpu_task(void *pvParameters) {
         pkt.yaw   = e.angle.yaw;
 
         static float last_pitch = 0;
-        float dp = pkt.pitch - last_pitch;   
+        float dp = pkt.pitch - last_pitch;
         last_pitch = pkt.pitch;
-        pkt.click = (dp > 15.0f);
+        pkt.click = (dp > 1.0f);
 
         xQueueSend(xQueueIMU, &pkt, portMAX_DELAY);
 
